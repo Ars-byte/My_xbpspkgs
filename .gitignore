@@ -2,8 +2,8 @@
 packages/genovalauncher-*.xbps
 packages/helium-bin-*.xbps
 packages/pcsx2-*.xbps
-packages/trinity-launcher-*.xbps
 *.AppImage
 *.deb
 tmp/
 pkg-destdir/
+packages/pkg-pool/

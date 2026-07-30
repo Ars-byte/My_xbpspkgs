@@ -11,6 +11,7 @@ APPDIR="/tmp/pcsx2-build/squashfs-root"
 rm -rf "$DESTDIR"
 mkdir -p "$DESTDIR/usr/bin"
 mkdir -p "$DESTDIR/usr/lib/pcsx2"
+mkdir -p "$DESTDIR/usr/lib/pcsx2/plugins"
 mkdir -p "$DESTDIR/usr/share/applications"
 mkdir -p "$DESTDIR/usr/share/icons/hicolor/256x256/apps"
 mkdir -p "$DESTDIR/usr/share/pixmaps"
@@ -18,6 +19,12 @@ mkdir -p "$DESTDIR/usr/share/pixmaps"
 # Copy binary
 cp "$APPDIR/usr/bin/pcsx2-qt" "$DESTDIR/usr/lib/pcsx2/pcsx2-qt"
 chmod 755 "$DESTDIR/usr/lib/pcsx2/pcsx2-qt"
+
+# Copy qt.conf so pcsx2-qt finds its plugins relative to the bin
+cp "$APPDIR/usr/bin/qt.conf" "$DESTDIR/usr/lib/pcsx2/qt.conf"
+
+# Copy plugins (wayland + xcb + the rest) — this is what fixes the Qt platform error
+cp -a "$APPDIR/usr/plugins/"* "$DESTDIR/usr/lib/pcsx2/plugins/"
 
 # Copy bundled libs
 cp -a "$APPDIR/usr/lib/"* "$DESTDIR/usr/lib/pcsx2/" 2>/dev/null || true
@@ -35,19 +42,18 @@ if [ -f "$APPDIR/PCSX2.png" ]; then
     cp "$APPDIR/PCSX2.png" "$DESTDIR/usr/share/pixmaps/pcsx2.png"
 fi
 
-# Wrapper script
+# Wrapper script — sets QT_PLUGIN_PATH so Qt finds wayland/xcb plugins
 cat > "$DESTDIR/usr/bin/pcsx2" << 'EOF'
 #!/bin/bash
 export LD_LIBRARY_PATH="/usr/lib/pcsx2:${LD_LIBRARY_PATH}"
+export QT_PLUGIN_PATH="/usr/lib/pcsx2/plugins:${QT_PLUGIN_PATH}"
 exec /usr/lib/pcsx2/pcsx2-qt "$@"
 EOF
 chmod 755 "$DESTDIR/usr/bin/pcsx2"
 
-# Deps
-DEPS="gtk+3 libX11 libXext libXi libXrandr libXrender libXfixes libXcursor libglvnd libdrm libxkbcommon zlib bzip2 freetype fontconfig libpng pulseaudio alsa-lib dbus-glib SDL2 eudev-libgudev libavcodec libavformat libavutil libswresample libswscale"
-
 echo "Building pcsx2 xbps..."
 cd "$WORKDIR/packages"
+rm -f pcsx2-*.xbps
 xbps-create \
     -A x86_64 \
     -n "pcsx2-${VERSION}_1" \
@@ -59,4 +65,6 @@ xbps-create \
     --compression zstd \
     "$DESTDIR"
 
-echo "pcsx2 built: $(ls "$WORKDIR/packages/pool"/pcsx2-*.xbps 2>/dev/null)"
+# Re-index the repo pool
+xbps-rindex -a pcsx2-*.xbps 2>/dev/null || true
+echo "pcsx2 built: $(ls "$WORKDIR/packages"/pcsx2-*.xbps)"

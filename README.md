@@ -8,14 +8,17 @@ My xbps packages for **Void Linux** :) — una colección de paquetes `.xbps` co
 |---|---|---|---|---|
 | `genovalauncher` | 1.3.1 | Launcher de Minecraft Bedrock (PySide6/Qt6) | Grande | [Ars-byte/GenovaLauncher](https://github.com/Ars-byte/GenovaLauncher) |
 | `helium-bin` | 0.14.9.1 | Navegador web Chromium enfocado en privacidad | Grande | [imputnet/helium-linux](https://github.com/imputnet/helium-linux) |
-| `pcsx2` | 2.6.3 | Emulador de PlayStation 2 | Grande | [pcsx2.net](https://pcsx2.net/) |
-| `trinity-launcher` | 2.6.0 | Launcher de Minecraft Bedrock en C++/Qt6 | Grande | [Trinity-LA/Trinity-Launcher](https://github.com/Trinity-LA/Trinity-Launcher) |
+| `pcsx2` | 2.6.3 | Emulador de PlayStation 2 (con plugins Qt incluidos) | Grande | [pcsx2.net](https://pcsx2.net/) |
 | `imgview` | 1.0.0 | Visor de imágenes en terminal (C++) | Pequeño | [Ars-byte/Imgview](https://github.com/Ars-byte/Imgview) |
 | `pytrix` | 1.0.0 | Matrix digital rain en terminal (Python) | Pequeño | [Ars-byte/Pytrix](https://github.com/Ars-byte/Pytrix) |
 | `pytter` | 1.0.0 | Test de velocidad de internet con TUI (Python) | Pequeño | [Ars-byte/pytter](https://github.com/Ars-byte/pytter) |
 
 > **Paquetes pequeños** (`< 50 MB`): viven directamente en este repo, en `packages/`.
 > **Paquetes grandes** (`>= 50 MB`): se descargan desde el [release v1.0.0](https://github.com/Ars-byte/My_xbpspkgs/releases/tag/v1.0.0).
+>
+> **Nota**: `pcsx2` incluye los plugins Qt de plataforma (wayland, xcb) en el wrapper, por lo que funciona sin el error `qt.qpa.plugin: Could not find the Qt platform plugin`.
+>
+> **Nota**: `trinity-launcher` fue eliminado del repositorio. Si lo tenías instalado, desinstálalo con `doas xbps-remove trinity-launcher`.
 
 ---
 
@@ -58,14 +61,11 @@ doas xbps-install --repository=/home/ars/Downloads helium-bin
 doas xbps-rindex -a /home/ars/Downloads/pcsx2-2.6.3_1.x86_64.xbps
 doas xbps-install --repository=/home/ars/Downloads pcsx2
 
-# trinity-launcher
-doas xbps-rindex -a /home/ars/Downloads/trinity-launcher-2.6.0_1.x86_64.xbps
-doas xbps-install --repository=/home/ars/Downloads trinity-launcher
 ```
 
 ### Opción B — Instalar todo de una
 
-Descarga todos los `.xbps` (los 3 pequeños del repo + los 4 grandes del release) a la misma carpeta, por ejemplo `~/Downloads`, y entonces:
+Descarga todos los `.xbps` (los 3 pequeños del repo + los 3 grandes del release) a la misma carpeta, por ejemplo `~/Downloads`, y entonces:
 
 ```bash
 # Indexar todos los paquetes de la carpeta
@@ -74,7 +74,7 @@ doas xbps-rindex -a ~/Downloads/*.xbps
 # Instalar todos
 doas xbps-install --repository=/home/ars/Downloads \
     imgview pytrix pytter \
-    genovalauncher helium-bin pcsx2 trinity-launcher
+    genovalauncher helium-bin pcsx2
 ```
 
 ### Opción C — Agregar el repositorio permanentemente
@@ -113,9 +113,8 @@ pytrix -a -l 50 --density 0.5     # ASCII, trails largos, disperso
 pytter
 pytter -hideip                    # oculta tu IP
 
-# Launchers de Minecraft Bedrock
-genovalauncher                    # GenovaLauncher
-trinity-launcher                  # Trinity Launcher
+# Launcher de Minecraft Bedrock
+genovalauncher
 
 # Navegador web
 helium
@@ -143,7 +142,6 @@ bash build-pytter.sh     # requiere: python3
 bash build-helium.sh         # requiere: curl, jq, binutils, ar
 bash build-pcsx2.sh          # requiere: el AppImage de PCSX2 en Downloads
 bash build-genovalauncher.sh # requiere: el dist de GenovaLauncher ya construido
-bash build-trinity.sh        # requiere: el tarball de Trinity ya descargado
 ```
 
 Los `.xbps` resultantes caen en `packages/`.
@@ -160,7 +158,6 @@ Los `.xbps` resultantes caen en `packages/`.
 | genovalauncher | GPL-3.0 |
 | helium-bin | GPL-3.0 |
 | pcsx2 | GPL-3.0 |
-| trinity-launcher | MIT |
 
 ---
 
