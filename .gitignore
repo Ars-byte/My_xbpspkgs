@@ -1,0 +1,9 @@
+# Large packages (managed via GitHub Releases)
+packages/genovalauncher-*.xbps
+packages/helium-bin-*.xbps
+packages/pcsx2-*.xbps
+packages/trinity-launcher-*.xbps
+*.AppImage
+*.deb
+tmp/
+pkg-destdir/
