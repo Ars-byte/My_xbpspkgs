@@ -163,4 +163,4 @@ Los `.xbps` resultantes caen en `packages/`.
 
 ## Autor
 
-**Ars-Byte** — [GitHub](https://github.com/Ars-byte)
+**Ars-Byte** — [GitHub](https://github.com/Ars-byte) :)
